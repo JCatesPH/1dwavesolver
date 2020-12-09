@@ -1,2 +1,3 @@
 *.csv
 *.png
+.vscode/settings.json
