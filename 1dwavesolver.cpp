@@ -22,11 +22,11 @@ const double dt = 1e-13;
 const double sigma2 = 15e5;
 const double lamb0 = 5e-3;
 double k0 = 2*M_PI/lamb0;
-const int nk = 101;
+const int nk = 51;
 double dk = k0*1e-2;
 double shift = nx/10*dx;
 double omega = 2*M_PI*c/lamb0;
-const double I0 = 1;
+const double I0 = 1e3;
 double A0 = sqrt(2*I0/(eps0*c));
 
 

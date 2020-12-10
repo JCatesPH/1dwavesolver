@@ -39,4 +39,4 @@ anim = FuncAnimation(fig, animate, init_func=init,
                             blit=True)
 
 #%%
-anim.save('./wave.gif', savefig_kwargs={'transparent' : False}, dpi=50, codec='gif')
+anim.save('./wave.mp4', savefig_kwargs={'transparent' : False}, dpi=150)
