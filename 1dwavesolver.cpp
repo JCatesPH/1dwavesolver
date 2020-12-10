@@ -22,7 +22,7 @@ const double dt = 1e-13;
 const double sigma2 = 15e5;
 const double lamb0 = 5e-3;
 double k0 = 2*M_PI/lamb0;
-const int nk = 51;
+const int nk = 5;
 double dk = k0*1e-2;
 double shift = nx/10*dx;
 double omega = 2*M_PI*c/lamb0;
@@ -43,7 +43,8 @@ double f(double x, double *k, double *Ak, double s){
 double g(double x, double *k, double *Ak, double omega, double s){
     double sum = 0.0;
     for (int i=0; i<nk; i++){
-        sum = sum - k[i] * Ak[i] * c * sin(k[i] * x);
+        if (x > 0) sum = sum - k[i] * Ak[i] * c * sin(k[i] * x);
+        else sum = sum - k[i] * Ak[i] * c * sin(-k[i] * x);
     }
     return sum;
 }
