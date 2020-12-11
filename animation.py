@@ -1,6 +1,8 @@
 #%%
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 plt.style.use('seaborn-pastel')

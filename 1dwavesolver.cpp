@@ -15,18 +15,18 @@
 
 const double c = GSL_CONST_MKSA_SPEED_OF_LIGHT;
 const double eps0 = GSL_CONST_MKSA_VACUUM_PERMITTIVITY;
-const int nx = 10000;
-const double dx = 1e-4;
-const int nt = 10000;
-const double dt = 1e-13;
-const double sigma2 = 15e5;
+const int nx = 1000;
+const double dx = 1e-10;
+const int nt = 1000;
+const double dt = 1e-19;
+const double sigma2 = 1e6;
 const double lamb0 = 5e-3;
 double k0 = 2*M_PI/lamb0;
-const int nk = 5;
+const int nk = 21;
 double dk = k0*1e-2;
 double shift = nx/10*dx;
 double omega = 2*M_PI*c/lamb0;
-const double I0 = 1e3;
+const double I0 = 1e9;
 double A0 = sqrt(2*I0/(eps0*c));
 
 
@@ -43,8 +43,7 @@ double f(double x, double *k, double *Ak, double s){
 double g(double x, double *k, double *Ak, double omega, double s){
     double sum = 0.0;
     for (int i=0; i<nk; i++){
-        if (x > 0) sum = sum - k[i] * Ak[i] * c * sin(k[i] * x);
-        else sum = sum - k[i] * Ak[i] * c * sin(-k[i] * x);
+        sum = sum - k[i] * Ak[i] * c * sin(k[i] * x);
     }
     return sum;
 }

@@ -1,0 +1,11 @@
+cycler==0.10.0
+ffmpeg==1.4
+kiwisolver==1.1.0
+matplotlib==3.0.3
+numpy==1.18.5
+pandas==0.24.2
+pandas-io==0.0.1
+pyparsing==2.4.7
+python-dateutil==2.8.1
+pytz==2020.4
+six==1.15.0
