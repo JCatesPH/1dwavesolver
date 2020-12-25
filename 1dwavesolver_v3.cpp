@@ -15,40 +15,43 @@
 
 const double c = GSL_CONST_MKSA_SPEED_OF_LIGHT;
 const double eps0 = GSL_CONST_MKSA_VACUUM_PERMITTIVITY;
-const int nx = 10000;
-const double dx = 1e-8;
-const int nt = 10000;
-const double dt = 1e-19;
-const double sigma2 = 1e6;
+const int nx = 1e6;
+const double dx = 1e-12;
+const int nt = 201;
+const double dt = 1e-22;
+const double sigma2 = 1e12;
 const double lamb0 = 5e-7;
 double k0 = 2*M_PI/lamb0;
-const int nk = 11;
+const int nk = 1;
 double dk = k0*1e-2;
 double shift = nx/10*dx;
 double omega = 2*M_PI*c/lamb0;
-const double I0 = 1e14;
+const double I0 = 1e3;
 double A0 = sqrt(2*I0/(eps0*c));
 
 
 
 using namespace std;
 
-double f(double x, double *k, double *Ak, double s){
-    double sum = 0.0;
+complex<double> f(double x, complex<double> *k, complex<double> *Ak, double s){
+    complex<double> Im (0.0,1.0);
+    complex<double> sum = 0.0;
     for (int i=0; i<nk; i++){
+        //sum = sum + Ak[i] * exp(-x*x + Im * k[i] * x);
         sum = sum + Ak[i] * cos(k[i] * x);
     }
     return sum;
 }
-double g(double x, double *k, double *Ak, double omega, double s){
-    double sum = 0.0;
+complex<double> g(double x, complex<double> *k, complex<double> *Ak, double omega, double s){
+    complex<double> Im (0.0,1.0);
+    complex<double> sum = 0.0;
     for (int i=0; i<nk; i++){
-        sum = sum - k[i] * Ak[i] * c * sin(k[i] * x);
+        sum = sum - 2.0 * k[i] * Ak[i] * c * exp(Im * k[i] * x);
     }
     return sum;
 }
 
-void initialconds(double *x, double *kx, double *Ak, double *u, double *ut, double omega, double s){
+void initialconds(double *x, complex<double> *kx, complex<double> *Ak, complex<double> *u, complex<double> *ut, double omega, double s){
     for (int i=0; i<nk; i++){
         kx[i] = k0 - (nk / 2 - i) * dk;
         Ak[i] = A0 * exp(-(kx[i]-k0)*(kx[i]-k0)/sigma2);
@@ -69,15 +72,15 @@ int main(){
     double calctime;
     time(&tic);
     double *x = (double *)malloc(nx*sizeof(double));
-    double *kx = (double *)malloc(nk*sizeof(double));
-    double *Ak = (double *)malloc(nk*sizeof(double));
-    double *u = (double *)malloc(nx*sizeof(double));
-    double *ut = (double *)malloc(nx*sizeof(double));
+    complex<double> *kx = (complex<double> *)malloc(nk*sizeof(complex<double>));
+    complex<double> *Ak = (complex<double> *)malloc(nk*sizeof(complex<double>));
+    complex<double> *u = (complex<double> *)malloc(nx*sizeof(complex<double>));
+    complex<double> *ut = (complex<double> *)malloc(nx*sizeof(complex<double>));
     double alpha = c * dt / dx;
 
-    double *Et2 = (double *)malloc(nx*sizeof(double));
-    double *Et1 = (double *)malloc(nx*sizeof(double));
-    double *Et0 = (double *)malloc(nx*sizeof(double));
+    complex<double> *Et2 = (complex<double> *)malloc(nx*sizeof(complex<double>));
+    complex<double> *Et1 = (complex<double> *)malloc(nx*sizeof(complex<double>));
+    complex<double> *Et0 = (complex<double> *)malloc(nx*sizeof(complex<double>));
 
     cout << "nx = " << nx << endl;
     cout << "dx = " << dx << endl;
@@ -93,17 +96,17 @@ int main(){
     FILE *fp;
 
     fp = fopen("initialdistribution.csv", "w+");
-    fprintf(fp, "x,Re[E]\n");
+    fprintf(fp, "x,Re[E],Im[E]\n");
     for(int i=0; i<nx; i++){
-        fprintf(fp, "%f,%f\n",x[i],u[i]);
+        fprintf(fp, "%f,%f,%f\n",x[i],real(u[i]),imag(u[i]));
     }
     fclose(fp);
 
     for(int i=0; i<nx; i++){
-        double fi = f(x[i],kx,Ak,shift);
-        double gi = g(x[i],kx,Ak,omega,shift);
-        double fim1;
-        double fip1;
+        complex<double> fi = f(x[i],kx,Ak,shift);
+        complex<double> gi = g(x[i],kx,Ak,omega,shift);
+        complex<double> fim1;
+        complex<double> fip1;
 
         if (i == 0)
         {
@@ -154,10 +157,10 @@ int main(){
             char buffer[32];
             snprintf(buffer, sizeof(char) * 32, "data/Ep_%i.csv", j);
             fp = fopen(buffer, "w+");
-            fprintf(fp, "x,Re[E]\n");
+            fprintf(fp, "x,Re[E],Im[E]\n");
             for(int i=0; i<nx; i++)
             { 
-                fprintf(fp, "%f,%f\n",x[i],Et0[i]);
+                fprintf(fp, "%f,%f,%f\n",x[i],real(Et0[i]),imag(Et0[i]));
             }    
             fprintf(fp, "\n");
             fclose(fp);
